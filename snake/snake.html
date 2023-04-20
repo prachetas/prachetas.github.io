@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Snake Game</title>
+	<style>
+		body {
+			background: linear-gradient(to right bottom, #4CAF50, #8BC34A, #CDDC39, #FFEB3B, #FFC107, #FF9800, #FF5722, #F44336, #E91E63, #9C27B0, #673AB7, #3F51B5);
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			font-family: Arial, sans-serif;
+			color: white;
+		}
+		#canvas {
+			border: 2px solid white;
+			background: rgba(0, 0, 0, 0.5);
+			margin-right: 50px;
+		}
+		#scores {
+			flex-basis: 300px;
+			padding: 20px;
+			background: rgba(0, 0, 0, 0.5);
+			border: 2px solid white;
+			max-height: 80vh;
+			overflow-y: auto;
+		}
+		#scores h2 {
+			margin-top: 0;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			text-align: center;
+		}
+		th, td {
+			padding: 5px;
+			border-bottom: 1px solid white;
+		}
+		th {
+			font-size: 1.2em;
+		}
+		td {
+			font-size: 1.1em;
+		}
+		td:nth-child(1) {
+			text-align: left;
+		}
+	</style>
+</head>
+<body>
+	<h1>Snake Game</h1>
+	<canvas id="canvas" width="400" height="400" tabindex="1"></canvas>
+	<div id="score">Score: 0</div>
+	<button onclick="restartGame()">Restart Game</button>
+
+	
+	<div id="scores">
+		<h2>High Scores</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Rank</th>
+					<th>Name</th>
+					<th>Score</th>
+				</tr>
+			</thead>
+			<tbody id="scoreTableBody">
+			</tbody>
+		</table>
+	</div>
+
+	<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		// Initialize the game variables
+		var canvas = document.getElementById("canvas");
+		var ctx = canvas.getContext("2d");
+		var gridSize = 10;
+		var snake = [{x: 0, y: 0}];
+		var food = {};
+		var direction = "right";
+		var score = 0;
+		var intervalId;
+		var highScores = getHighScores();
+		
+		
+		// Add the event listener for keyboard input
+document.addEventListener("keydown", function(event) {
+ console.log("Key pressed: ", event.key);
+    switch (event.key) {
+    case "ArrowLeft":
+        if (direction !== "right") {
+            dx = -gridSize;
+            dy = 0;
+            direction = "left";
+        }
+        break;
+    case "ArrowUp":
+        if (direction !== "down") {
+            dx = 0;
+            dy = -gridSize;
+            direction = "up";
+        }
+        break;
+    case "ArrowRight":
+        if (direction !== "left") {
+            dx = gridSize;
+            dy = 0;
+            direction = "right";
+        }
+        break;
+    case "ArrowDown":
+        if (direction !== "up") {
+            dx = 0;
+            dy = gridSize;
+            direction = "down";
+        }
+        break;
+}
+
+});
+
+
+		// Set up the game loop
+		var dx = gridSize;
+		var dy = 0;
+		function gameLoop() {
+			// Move the snake
+			var head = {x: snake[0].x + dx, y: snake[0].y + dy};
+			snake.unshift(head);
+			// Check for collision with food
+			if (head.x === food.x && head.y === food.y) {
+				score++;
+				generateFood();
+			} else {
+				snake.pop();
+			}
+
+			// Check for collision with wall or self
+			if (head.x < 0 || head.x >= canvas.width || head.y < 0|| head.y >= canvas.height || checkCollision(head, snake.slice(1))) {
+endGame();
+return;
+}
+
+		// Clear the canvas
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		// Draw the snake
+		ctx.fillStyle = "white";
+		snake.forEach(function(segment) {
+			ctx.fillRect(segment.x, segment.y, gridSize, gridSize);
+		});
+
+		// Draw the food
+		ctx.fillStyle = "red";
+		ctx.fillRect(food.x, food.y, gridSize, gridSize);
+
+		// Update the score
+		document.getElementById("score").innerHTML = "Score: " + score;
+
+		// Update the high scores
+		updateHighScores();
+
+		// Set the direction for the next frame
+		direction = getNextDirection(direction);
+
+		// Schedule the next frame
+		setTimeout(function() {
+			requestAnimationFrame(gameLoop);
+		}, 100);
+	}
+
+	// Generate a new food location
+	function generateFood() {
+		var x = Math.floor(Math.random() * canvas.width / gridSize) * gridSize;
+		var y = Math.floor(Math.random() * canvas.height / gridSize) * gridSize;
+		food = {x: x, y: y};
+		if (checkCollision(food, snake)) {
+			generateFood();
+		}
+	}
+
+	// Check if two objects collide
+	function checkCollision(obj1, obj2) {
+		return obj2.some(function(segment) {
+			return obj1.x === segment.x && obj1.y === segment.y;
+		});
+	}
+
+	// Get the next direction from the user input
+	function getNextDirection(currentDirection) {
+		var newDirection = currentDirection;
+		document.addEventListener("keydown", function(event) {
+			switch (event.keyCode) {
+				case 37:
+					if (currentDirection !== "right") {
+						newDirection = "left";
+					}
+					break;
+				case 38:
+					if (currentDirection !== "down") {
+						newDirection = "up";
+					}
+					break;
+				case 39:
+					if (currentDirection !== "left") {
+						newDirection = "right";
+					}
+					break;
+				case 40:
+					if (currentDirection !== "up") {
+						newDirection = "down";
+					}
+					break;
+			}
+		});
+		return newDirection;
+	}
+
+	// Start the game
+	function startGame() {
+		// Initialize the snake and food
+		snake = [{x: 0, y: 0}];
+		generateFood();
+
+		// Reset the score
+		score = 0;
+		document.getElementById("score").innerHTML = "Score: " + score;
+
+		// Start the game loop
+		intervalId = setInterval(gameLoop, 100);
+	}
+	
+	function restartGame() {
+    // Reset the game variables
+    snake = [{x: 0, y: 0}];
+    food = {};
+    direction = "right";
+    score = 0;
+
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Start the game loop again
+    gameLoop();
+}
+
+	// End the game
+function endGame() {
+// Stop the game loop
+clearTimeout(intervalId);
+// Ask for the player's name
+var name = prompt("Game over! Your score is " + score + ". Please enter your name:");
+if (name !== null && name !== "") {
+// Save the high score
+highScores.push({name: name, score: score});
+highScores.sort(function(a, b) { return b.score - a.score; });
+highScores.splice(10);
+localStorage.setItem("highScores", JSON.stringify(highScores));
+// Update the high score table
+updateHighScoreTable();
+}
+}
+
+// Get the high scores from local storage
+function getHighScores() {
+var highScores = localStorage.getItem("highScores");
+if (highScores === null) {
+return [];
+} else {
+return JSON.parse(highScores);
+}
+}
+
+// Update the high score table
+function updateHighScoreTable() {
+var tableBody = document.getElementById("scoreTableBody");
+tableBody.innerHTML = "";
+highScores.forEach(function(entry, index) {
+var row = document.createElement("tr");
+var rank = document.createElement("td");
+var name = document.createElement("td");
+var score = document.createElement("td");
+rank.innerText = index + 1;
+name.innerText = entry.name;
+score.innerText = entry.score;
+row.appendChild(rank);
+row.appendChild(name);
+row.appendChild(score);
+tableBody.appendChild(row);
+});
+}
+
+
+
+
+// Update the high scores in local storage
+function updateHighScores() {
+highScores.forEach(function(entry, index) {
+if (entry.score < score) {
+highScores.splice(index, 0, {name: "Anonymous", score: score});
+highScores.pop();
+localStorage.setItem("highScores", JSON.stringify(highScores));
+updateHighScoreTable();
+return;
+}
+});
+}
+
+
+
+
+// Start the game loop
+generateFood();
+intervalId = setTimeout(function() {
+requestAnimationFrame(gameLoop);
+}, 100);
+});
+
+
+
+
+</script>
+
+</body>
+</html>
