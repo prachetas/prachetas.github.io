@@ -65,13 +65,13 @@
   <script>
     function calculateTax() {
       // Get input values
-      let income = parseInt(document.getElementById("income").value);
+      let income = parseInt(document.getElementById("annualIncome").value);
       let age = parseInt(document.getElementById("age").value);
-      let deductions_80C = parseInt(document.getElementById("deductions_80C").value);
-      let deductions_NPS = parseInt(document.getElementById("deductions_NPS").value);
-      let deductions_HRA = parseInt(document.getElementById("deductions_HRA").value);
-      let deductions_homeLoan = parseInt(document.getElementById("deductions_homeLoan").value);
-      let deductions_medical = parseInt(document.getElementById("deductions_medical").value);
+      let deductions_80C = parseInt(document.getElementById("section80C").value);
+      let deductions_NPS = parseInt(document.getElementById("nps").value);
+      let deductions_HRA = parseInt(document.getElementById("hra").value);
+      let deductions_homeLoan = parseInt(document.getElementById("homeLoanInterest").value);
+      let deductions_medical = parseInt(document.getElementById("medical").value);
 
       // Calculate total deductions
       let totalDeductions = Math.min(deductions_80C, 150000) +
