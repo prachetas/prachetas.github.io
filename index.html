@@ -10,7 +10,7 @@
 
 <body>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="#">Prachetas</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -18,8 +18,12 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
+          <a class="nav-link" href="/taxcalculator/oldregcalc.html">TaxCalculator</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="/snake/snake.html">Snake</a>
         </li>
+
         <li class="nav-item">
           <a class="nav-link" href="/contact.html">Contact</a>
         </li>
@@ -27,52 +31,8 @@
     </div>
   </nav>
   <div class="container mt-5">
-    <h1 class="text-center mb-4">Income Tax Calculator</h1>
-    <form id="taxCalculatorForm">
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="annualIncome">Annual Income</label>
-          <input type="number" class="form-control" id="annualIncome" name="annualIncome" required>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="age">Age</label>
-          <input type="number" class="form-control" id="age" name="age" required>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="section80C">Section 80C (Max: 150000)</label>
-          <input type="number" class="form-control" id="section80C" name="section80C" max="150000">
-        </div>
-        <div class="form-group col-md-6">
-          <label for="nps">NPS (Max: 50000)</label>
-          <input type="number" class="form-control" id="nps" name="nps" max="50000">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="hra">HRA</label>
-          <input type="number" class="form-control" id="hra" name="hra">
-        </div>
-        <div class="form-group col-md-6">
-          <label for="homeLoanInterest">Home Loan Interest (Max: 350000)</label>
-          <input type="number" class="form-control" id="homeLoanInterest" name="homeLoanInterest" max="350000">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="medical">Medical (Max: 50000)</label>
-          <input type="number" class="form-control" id="medical" name="medical" max="50000">
-        </div>
-        <div class="form-group col-md-6">
-          <label for="standardDeduction">Standard Deduction (Fixed: 50000)</label>
-          <input type="text" class="form-control" id="standardDeduction" name="standardDeduction" value="50000" readonly>
-        </div>
-      </div>
-      <button type="submit" class="btn btn-primary">Calculate</button>
-    </form>
-    <h2 id="result" class="mt-4 text-center"></h2>
-  </div>
+    <h1 class="text-center mb-4">Home</h1>
+    
 
   <!-- Add Bootstrap JS link -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -80,71 +40,6 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
-  <script>
-    function calculateTax() {
-      // Get input values
-      let income = parseInt(document.getElementById("income").value);
-      let age = parseInt(document.getElementById("age").value);
-      let deductions_80C = parseInt(document.getElementById("deductions_80C").value);
-      let deductions_NPS = parseInt(document.getElementById("deductions_NPS").value);
-      let deductions_HRA = parseInt(document.getElementById("deductions_HRA").value);
-      let deductions_homeLoan = parseInt(document.getElementById("deductions_homeLoan").value);
-      let deductions_medical = parseInt(document.getElementById("deductions_medical").value);
-
-      // Calculate total deductions
-      let totalDeductions = Math.min(deductions_80C, 150000) +
-        Math.min(deductions_NPS, 50000) +
-        deductions_HRA +
-        Math.min(deductions_homeLoan, 350000) +
-        Math.min(deductions_medical, 50000) +
-        50000; // Standard Deduction
-
-      // Calculate taxable income
-      let taxableIncome = Math.max(income - totalDeductions, 0);
-
-      // Calculate tax based on age and taxable income
-      let tax = 0;
-      if (age < 60) {
-        // For individuals below 60 years of age (Normal Citizens)
-        if (taxableIncome <= 250000) {
-          tax = 0;
-        } else if (taxableIncome <= 500000) {
-          tax = (taxableIncome - 250000) * 0.05;
-        } else if(taxableIncome <= 1000000) {
-tax = (taxableIncome - 500000) * 0.2 + 25000;
-} else {
-tax = (taxableIncome - 1000000) * 0.3 + 125000;
-}
-} else if (age >= 60 && age < 80) {
-// For individuals between 60 and 80 years of age (Senior Citizens)
-if (taxableIncome <= 300000) {
-tax = 0;
-} else if (taxableIncome <= 500000) {
-tax = (taxableIncome - 300000) * 0.05;
-} else if (taxableIncome <= 1000000) {
-tax = (taxableIncome - 500000) * 0.2 + 10000;
-} else {
-tax = (taxableIncome - 1000000) * 0.3 + 110000;
-}
-} else {
-// For individuals above 80 years of age (Super Senior Citizens)
-if (taxableIncome <= 500000) {
-tax = 0;
-} else if (taxableIncome <= 1000000) {
-tax = (taxableIncome - 500000) * 0.2;
-} else {
-tax = (taxableIncome - 1000000) * 0.3 + 100000;
-}
-}
-  // Display the result
-  document.getElementById("result").innerHTML = "Tax Payable: INR " + tax.toFixed(2);
-}
-
-// Attach event listener to form submit
-document.getElementById("taxCalculatorForm").addEventListener("submit", function (event) {
-  event.preventDefault();
-  calculateTax();
-});
-</script>
+  
 </body>
 </html>
