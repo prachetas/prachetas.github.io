@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compound Interest Calculator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>PF Calculator</h2>
+        <form>
+            <div class="form-group">
+                <label for="p0">Current Balance:</label>
+                <input type="number" class="form-control" id="p0" placeholder="Enter current balance" required>
+            </div>
+            <div class="form-group">
+                <label for="p">Yearly Contribution:</label>
+                <input type="number" class="form-control" id="p" placeholder="Enter yearly contribution" required>
+            </div>
+            <div class="form-group">
+                <label for="r">Interest Rate (%):</label>
+                <input type="number" class="form-control" id="r" placeholder="Enter interest rate" required>
+            </div>
+            <div class="form-group">
+                <label for="t">Number of Years:</label>
+                <input type="number" class="form-control" id="t" placeholder="Enter number of years" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="calculateCompoundInterest()">Calculate</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function comp(p0, p, r, t) {
+            const a = [];
+            let principal = p0;
+            for (let i = 0; i < t; i++) {
+                const interest = (principal + p) * (r / 100.0);
+                principal += p + interest;
+                a.push(principal);
+            }
+            return a;
+        }
+
+        function calculateCompoundInterest() {
+            const p0 = parseFloat(document.getElementById('p0').value);
+            const p = parseFloat(document.getElementById('p').value);
+            const r = parseFloat(document.getElementById('r').value);
+            const t = parseInt(document.getElementById('t').value);
+
+            const a = comp(p0, p, r, t);
+            let resultHtml = '<table class="table">';
+            resultHtml += '<thead><tr><th>Year</th><th>Amount</th></tr></thead><tbody>';
+            for (let i = 0; i < a.length; i++) {
+                resultHtml += `<tr><td>${i + 1}</td><td>${a[i].toFixed(2)}</td></tr>`;
+            }
+            resultHtml += '</tbody></table>';
+            document.getElementById('result').innerHTML = resultHtml;
+        }
+    </script>
+</body>
+</html>
